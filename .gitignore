@@ -396,3 +396,12 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+# permissions
+!CGAula090322/objs/*
+!CGAula090322/freeglut/*
+!CGAula090322/glew-2.1.0/*
+!CGAula090322/Textures/*
+!CGAula090322/freeglut.dll
+!CGAula090322/glew32.dll
