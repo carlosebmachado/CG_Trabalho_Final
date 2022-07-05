@@ -121,10 +121,12 @@ void loadObj(string fname) {
 
 	arquivo.close();
 
+	// Modelo de testes
 	// vertice              textura       normal
 	// 0.5f,  0.5f, 0.0f,   1.0f, 1.0f,   0.0f, 0.0f, 1.0f,
 	// 0.5f,  0.5f, 0.0f,   1.0f, 1.0f,   0.0f, 0.0f, 1.0f,
 	// 0.5f,  0.5f, 0.0f,   1.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+
 	for (int i = 0; i < faces.size(); i++) {
 		vector<int> face = faces[i];
 
@@ -170,7 +172,7 @@ void loadObj(string fname) {
 }
 
 void loadExample() {
-	// mapear as informações, as faces
+	//  Mapear as informações, as faces
 	//  vertice              textura       normal
 	bufferArraySize = 32;
 	vertices = new float[bufferArraySize] {
@@ -193,19 +195,19 @@ BitMapFile* getBMPData(string filename) {
 	infile.seekg(10);
 	infile.read((char*)&offset, 4);
 
-	// Pegar o tamanho do cabeçalho do bmp.
+	// Pegar o tamanho do cabeçalho do bmp
 	infile.read((char*)&headerSize, 4);
 
-	// Pegar a altura e largura da imagem no cabeçalho do bmp.
+	// Pegar a altura e largura da imagem no cabeçalho do bmp
 	infile.seekg(18);
 	infile.read((char*)&bmp->sizeX, 4);
 	infile.read((char*)&bmp->sizeY, 4);
 
-	// Alocar o buffer para a imagem.
+	// Alocar o buffer para a imagem
 	size = bmp->sizeX * bmp->sizeY * 24;
 	bmp->data = new unsigned char[size];
 
-	// Ler a informação da imagem.
+	// Ler a informação da imagem
 	infile.seekg(offset);
 	infile.read((char*)bmp->data, size);
 
@@ -220,6 +222,7 @@ BitMapFile* getBMPData(string filename) {
 	return bmp;
 }
 
+// Funcao para capturar as texturas obtidas em um arquivo bmp pre-definido
 void loadExternalTextures(std::string nome_arquivo, int id_textura) {
 	BitMapFile* image[1];
 
@@ -236,6 +239,7 @@ void loadExternalTextures(std::string nome_arquivo, int id_textura) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[0]->sizeX, image[0]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image[0]->data);
 }
 
+// Funcao de leitura de arquivos e conversao para string do conteudo do arquivo
 char* readStringFromFile(char* fn) {
 	FILE* fp;
 	char* content = NULL;
@@ -259,6 +263,7 @@ char* readStringFromFile(char* fn) {
 	return content;
 }
 
+// Funcao para definir os shaders, capturando as informacoes dos arquivos .vert e .frag que compoe o projeto
 void setShaders() {
 	char* vs = NULL, * fs = NULL, * fs2 = NULL;
 
@@ -267,6 +272,7 @@ void setShaders() {
 	v = glCreateShader(GL_VERTEX_SHADER);
 	f = glCreateShader(GL_FRAGMENT_SHADER);
 
+	// Os arquivos carregados serao transformados em string para leitura
 	char vertex_shader[] = "simples.vert";
 	char fragment_shader[] = "simples.frag";
 	vs = readStringFromFile(vertex_shader);
@@ -314,6 +320,7 @@ void setShaders() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, bufferArraySize * sizeof(float), vertices, GL_STATIC_DRAW);
+	// Os tamanhos e posicoes foram ajustados devido a retirada do atributo cor, que nao sera utilizado devido aos shaders
 	//                  pos  tam                    tam total                 pos apos tam
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -327,7 +334,7 @@ void setShaders() {
 	glUseProgram(p);
 
 }
-
+// Funcao de visualizacao onde serao carregadas todas as posicoes do objeto
 void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -382,7 +389,7 @@ void display(void) {
 
 	glBindTexture(GL_TEXTURE_2D, texturas[1]);
 	glBindVertexArray(VAO);
-	// obj normal vai ser gl_triangle e vai de 0 até a quantidade de vertices
+	// Obj normal vai ser gl_triangle e vai de 0 até a quantidade de vertices
 	if (example) {
 		glDrawArrays(GL_QUADS, 0, 4);
 	}
@@ -397,63 +404,74 @@ void display(void) {
 	glutPostRedisplay();
 }
 
+// Mapeamento de teclas
+
 void key(unsigned char k, int x, int y) {
+	// Tecla U diminui a intensidade da Luz
 	if (k == 'u')
 		intensidadeLuzAmbiente -= 0.05;
+	// Tecla K aumenta a intensidade da Luz
 	else if (k == 'o')
 		intensidadeLuzAmbiente += 0.05;
-
+	// Tecla J movimenta a Luz no eixo x, para a esquerda
 	if (k == 'j')
 		posLuz[0] -= 0.05;
+	// Tecla L movimenta a Luz no eixo x, para a direita
 	else if (k == 'l')
 		posLuz[0] += 0.05;
-
+	// Tecla I movimenta a Luz no eixo y, para a cima
 	if (k == 'i')
 		posLuz[1] += 0.05;
+	// Tecla K movimenta a Luz no eixo y, para a baixo
 	else if (k == 'k')
 		posLuz[1] -= 0.05;
 
+	// Tecla Q movimenta o objeto no eixo z, para trás
 	if (k == 'q')
 		pos_z -= 0.05;
+	// Tecla E movimenta o objeto no eixo z, para frente
 	else if (k == 'e')
 		pos_z += 0.05;
-
+	// Tecla S movimenta o objeto no eixo y, para baixo
 	if (k == 's')
 		pos_y -= 0.05;
+	// Tecla W movimenta o objeto no eixo y, para cima
 	else if (k == 'w')
 		pos_y += 0.05;
-
+	// Tecla D movimenta o objeto no eixo x, para direita
 	if (k == 'd')
 		pos_x += 0.05;
+	// Tecla A movimenta o objeto no eixo x, para esquerda
 	else if (k == 'a')
 		pos_x -= 0.05;
 
 	switch (k) {
-	case 55:
-		// Rotacionar para baixo
+	case 49:
+		//  Rotacionar para baixo no eixo x
 		angulo_x += ang_passo;
 		break;
-	case 57:
-		// Rotacionar para cima
+	case 51:
+		// Rotacionar para cima no eixo x
 		angulo_x -= ang_passo;
 		break;
 	case 52:
-		// Rotacionar para esquerda
+		// Rotacionar para esquerda no eixo y
 		angulo_y += ang_passo;
 		break;
 	case 54:
-		// Rotacionar para direita
+		// Rotacionar para direita no eixo y
 		angulo_y -= ang_passo;
 		break;
-	case 49:
+	case 55:
 		// Rotacionar eixo z
 		angulo_z += ang_passo;
 		break;
-	case 51:
+	case 57:
 		// Rotacionar eixo z
 		angulo_z -= ang_passo;
 		break;
-	case 53:
+		// Rotacionar o objeto em posicoes alatorias
+	case 48:
 		angulo_x += rand() % 30 - 15;
 		angulo_y += rand() % 30 - 15;
 		angulo_z += rand() % 20 - 10;
@@ -464,11 +482,11 @@ void key(unsigned char k, int x, int y) {
 void keyboard_special(int key, int x, int y) {
 	std::cout << "Special Key:" << key << std::endl;
 	switch (key) {
-		// aumentar escala
+		// Tecla PAGE UP aumenta a escala
 	case GLUT_KEY_PAGE_UP:
 		scale += 0.1;
 		break;
-		// diminuir escala
+		// Tecla PAGE DOWN diminui a escala
 	case GLUT_KEY_PAGE_DOWN:
 		if (scale > 0.2)
 			scale -= 0.1;
@@ -476,6 +494,7 @@ void keyboard_special(int key, int x, int y) {
 	}
 }
 
+// Funcao para redefinir o tamanho da janela
 void reshape(int width, int height) {
 	glViewport(0, 0, width, height);
 
@@ -488,6 +507,7 @@ void reshape(int width, int height) {
 	glLoadIdentity();
 }
 
+// Funcao para ativacao da Luz
 void setupRC() {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
@@ -504,6 +524,7 @@ void setupRC() {
 	glEnable(GL_LIGHTING);
 }
 
+// Funcao de inicializacao do projeto, carregando todas as funcoes anteriores
 void init() {
 	glClearColor(0, 0, 0, 1);
 	glClearDepth(1.0);
@@ -512,6 +533,7 @@ void init() {
 	glShadeModel(GL_SMOOTH);
 	setupRC();
 
+	// Texturas carregadas do arquivo bmp 
 	glGenTextures(2, texturas);
 	loadExternalTextures("Textures/brickwall.bmp", 0);
 	loadExternalTextures("Textures/brickwall_normal.bmp", 1);
@@ -520,7 +542,7 @@ void init() {
 	//comente essa linha para desabilitar os shaders
 	setShaders();
 }
-
+// Funcao de quebra de strings
 std::vector<std::string> split(std::string string, char splitChar) {
 	auto strings = std::vector<std::string>();
 	std::string currentString = "";
